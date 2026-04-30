@@ -1,0 +1,36 @@
+doctype html
+html
+  head
+    title Simple Form
+  body
+    h1 User Form
+    form(action="/submit" method="POST")
+      div
+        label Username:
+        br
+        input(type="text" name="username" )
+      br
+      div
+        label Code:
+        br
+        input(type="number" name="code")
+      br
+      div 
+        label Role: 
+        br
+        select(name="role")
+            option(value="admin") Admin 
+            option(value="manager") Manager
+            option(value="user") User
+      br
+      div
+        label Email: 
+        br
+        input(type="email" name="email")
+      br
+      div
+        label Mobile:
+        br
+        input(type="text" name="mobile")
+      br
+      button(type="submit") Submit
