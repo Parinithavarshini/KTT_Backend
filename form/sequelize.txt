@@ -1,0 +1,118 @@
+Sequelize - It is a ORM (Object relational Mapping) library for node.js used to 
+            interact with database using js methods and functions instead of sql code.
+
+Model - Database table structure
+=> const user=sequelize.define(user,{
+    name:DataTypes.STRING,
+    age:DataTypes.INTEGER
+});
+Datatypes - string,text,integer,float,double,boolean,date,dateonly,time,char,json
+
+CRUD operations
+=>Create
+    await User.create{(
+        name:"Pari",
+        age:21
+    )}
+
+=>Read
+    await users=User.findAll()
+    console.log(users)
+
+=>update
+    await User.update(
+        {age:21},
+        {where:{name:"pari"}}
+    )
+
+=>Delete
+    await User.destry({
+        where:{name:"Pari"}
+    })
+
+Validation - checks the data before saving to db
+    email:{
+        type:DataTypes.STRING,
+        allowNull:false
+    }
+
+Async and await support - waits until the database operation get completed
+const users=await findAll()
+
+Important things in sequelize
+=>Database - PostgreSQL,MySQL - place where actual data is stored
+=>Driver package - connects to the database actually
+    npm install pg pg-hstore
+=>Models - defines db table structure
+=>Controllers - actual logic like crud operations
+=>Routes - Defines API url
+
+Setting up sequelize
+1.Create projece
+2.Initialize node.js - creates package.json file
+3.Install packages - npm install sequelize
+                     npm install pg pg-hstore
+4.npm install express
+
+workflow:
+Postman creates req => express server receives res => check routes => controller function call => 
+                        function execute => sequelize create query => data saved in postgresql => response
+
+Query filters in sequelize
+
+1.where
+User.findAll({
+    where:{age:21}
+});
+
+2.where (multiple conditions)
+User.findAll({
+    where:{age:21,
+    name:"Pari"
+    }
+});
+
+3.Operators
+const {op}=require("sequelize");
+=>Greater than
+User.findAll({
+    where:{age:[op.gt]:18}
+});
+
+=>Less than
+User.findAll({
+    where:{age:[op.lt]:18}
+});
+
+=>IN
+User.findAll({
+    where:{age:{[op.in]:[18,19,20]}
+    }
+});
+
+=>like
+User.findAll({
+    where:{name:{[op.like]:"%p"}}
+});
+
+4.LIMIT
+User.findAll({
+    limit:5
+});
+
+5.OFFSET
+User.findAll({
+    limit:5,
+    offset:4
+});
+
+6.order
+User.findAll({
+    order:[["age","ASC"]]
+});
+
+7.select specific attriibutes
+User.findAll({
+    attributes:["name","age"]
+});
+
