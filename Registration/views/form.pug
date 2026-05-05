@@ -1,0 +1,47 @@
+doctype html
+html
+  head
+    title Student Form
+    link(rel="stylesheet" href="/style.css")
+  body.student-page
+    .container
+      form(action="/students/add" method="POST")
+        h2 Student Registration
+        input(type="text" name="name" placeholder="Name" required)
+        input(type="email" name="email" placeholder="Email" required)
+        input(type="number" name="age" placeholder="Age" required)
+        input(type="text" name="course" placeholder="Course" required)
+        input(type="text" name="city" placeholder="City" required)
+        input(type="text" name="phone" placeholder="Phone" required)
+        select(name="gender")
+          option(value="") Select Gender
+          option(value="Male") Male
+          option(value="Female") Female
+        button(type="submit") Submit
+      h2 Student List
+      table
+        thead
+          tr
+            th Name
+            th Email
+            th Age
+            th Course
+            th City
+            th Phone
+            th Gender
+            th Actions
+        tbody
+          each student in students
+            tr
+              td #{student.name}
+              td #{student.email}
+              td #{student.age}
+              td #{student.course}
+              td #{student.city}
+              td #{student.phone}
+              td #{student.gender}
+              td.action-cell
+                form(action=`/students/delete/${student.id}` method="POST")
+                  button.delete-btn Delete
+                a(href=`/students/edit/${student.id}`)
+                  button.edit-btn Edit

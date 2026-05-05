@@ -1,8 +1,8 @@
-const bcrypt=require("bcryptjs");
-const jwt=require("jsonwebtoken");
-const User=require("../models/usermodel")
+const bcrypt=require("bcryptjs");        //encrypt password
+const jwt=require("jsonwebtoken");       //create token after login
+const User=require("../models/usermodel") 
 exports.createUser=async(req,res)=>{
-  const {username,password,district,email,mobile,role,branch,status}=req.body;
+  const {username,password,district,email,mobile,role,branch,status}=req.body|| {}; //
   if(!username||!district||!email||!mobile||!role||!branch||!status){
     return res.send("All fields required");
   }
@@ -35,7 +35,7 @@ exports.deleteUser=async(req,res)=>{
   res.send("Deleted");
 };
 exports.registerUser=async(req,res)=>{
-  const{username,password,district,email,mobile,role,branch,status}=req.body;
+  const{username,password,district,email,mobile,role,branch,status}=req.body; // 
   if(!email||!password){
     return res.send("Email and password must");
   }

@@ -1,0 +1,19 @@
+doctype html
+html
+  head
+    title Edit Student
+    link(rel="stylesheet", href="/style.css")
+  body
+    .container
+      h2 Edit Student
+      form(action=`/students/update/${student.id}` method="POST")
+        input(type="text" name="name" value=student.name)
+        input(type="email" name="email" value=student.email)
+        input(type="number" name="age" value=student.age)
+        input(type="text" name="course" value=student.course)
+        input(type="text" name="city" value=student.city)
+        input(type="text" name="phone" value=student.phone)
+        select(name="gender")
+          option(value="Male" selected=student.gender=="Male") Male
+          option(value="Female" selected=student.gender=="Female") Female
+        button(type="submit") Update

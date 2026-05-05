@@ -1,0 +1,10 @@
+const express=require("express");
+const router=express.Router();
+const studentController=require("../controllers/studentController");
+const authMiddleware=require("../middleware/authMiddleware");
+router.get("/",authMiddleware,studentController.getStudents);
+router.post("/add",authMiddleware,studentController.addStudent);
+router.post("/update/:id",authMiddleware,studentController.updateStudent);
+router.post("/delete/:id",authMiddleware,studentController.deleteStudent);
+router.get("/edit/:id",authMiddleware,studentController.editPage);
+module.exports=router;
