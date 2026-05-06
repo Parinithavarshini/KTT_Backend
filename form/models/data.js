@@ -1,6 +1,7 @@
 const {DataTypes}=require("sequelize");
 const sequelize=require("../config/db");
-const data=sequelize.define("Data",{
+const Student=require("./student");
+const Data=sequelize.define("Data",{
     bio:{
         type:DataTypes.STRING
     },
@@ -8,4 +9,6 @@ const data=sequelize.define("Data",{
         type:DataTypes.STRING
     }
 });
-module.exports=data;
+Student.hasOne(Data);
+Data.belongsTo(Student);
+module.exports=Data;

@@ -116,3 +116,51 @@ User.findAll({
     attributes:["name","age"]
 });
 
+POSTMAN - send req to backend,check responses,test crud operations
+Methods - GET,PUT,POST,DELETE
+URL Bar - API Endpoint
+
+API - Application programming Interface
+API acts like a bridge b/w frontend and backend
+
+Authentication in API
+1.Session based Authentication
+    =>User logs in
+    =>Server creates the Session
+    =>server stores the user info
+    =>browser gets the session id (cookie)
+    =>Every req uses the session id
+
+2.JWT - secure token used to identify a user after login
+    If user details are correct a token is generated and token is sent to client ,
+    every req uses token if valid then allowed.
+
+3.API Key - secret key used to access the API
+    Developer gets the secret api key
+    It is sent with every request (req+key)
+    If valid -> returns data,else reject->req
+
+4.OAuth - authorization using third party application to access user data
+
+MIXINS - reusable UI Block
+1.Define
+    mixin card(name)
+      div.card
+        h2=name
+
+2.Use
+    +card("Node")
+    +card("React")
+    +card("Express")
+
+For Eg:
+mixins.pug - mixin card(name)
+               div.card
+                  h2=name
+
+index.pug - include mixins.pug
+            h1 My Courses
+            +card("HTML")
+            +card("CSS")
+            +card("JS")
+

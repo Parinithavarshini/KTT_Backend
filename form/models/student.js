@@ -1,5 +1,6 @@
 const {DataTypes}=require("sequelize");
 const sequelize=require("../config/db");
+const Subject=require("./subject");
 const Student = sequelize.define("Student",{
     id:{
         type:DataTypes.INTEGER,
@@ -17,6 +18,12 @@ const Student = sequelize.define("Student",{
     age:{
         type:DataTypes.INTEGER
     }
+});
+Student.belongsToMany(Subject,{
+   through:"StudentSubjects"
+});
+Subject.belongsToMany(Student,{
+   through:"StudentSubjects"
 });
 module.exports=Student;
 

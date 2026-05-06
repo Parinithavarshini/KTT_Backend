@@ -4,15 +4,10 @@ const studentRoutes = require("./routes/studentroute");
 const Student = require("./models/student");
 const Data = require("./models/data");
 const Course = require("./models/Course");
+const Subject=require("./models/subject");
 const app = express();
 app.use(express.json());
 
-// Association               -hasOne()-one to one,hasMany()-one to many,belongsTo()-foreign key refernces the parent
-Student.hasOne(Data);        //hasMany the output is given as array
-Data.belongsTo(Student);  
-// Student.hasMany(Course);       
-// Course.belongsTo(Student);
-// Data.belongsTo(Student);
 // Routes
 app.use("/",studentRoutes);
 
@@ -21,23 +16,60 @@ app.post("/data",async(req,res)=>{
    const data = await Data.create(req.body);
    res.json(data);
 });
+//create course
+app.post("/course",async(req,res)=>{
+   const course = await Course.create(req.body);
+   res.json(course);
+});
+//create subject
+app.post("/subject",async(req,res)=>{
+   const subject=await Subject.create(req.body);
+   res.json(subject);
+});
+//belongsToMany
+app.post("/connect",async(req,res)=>{
+   const student=await Student.findByPk(req.body.studentId);
+   const subject=await Subject.findByPk(req.body.subjectId);
+   await student.addSubject(subject);
+   res.send("Connected");
+});
+app.get("/many",async(req,res)=>{
+   const students=await Student.findAll({
+      include:Subject
+   });
+   res.json(students);
+});
+//hasMany()
+app.get("/eagercourse",async(req,res)=>{
+   const students=await Student.findAll({
+      include:Course
+   });
+   res.json(students);
+});
+app.get("/lazycourse",async(req,res)=>{
+   const student=await Student.findByPk(1);
+   const courses=await student.getCourses();
+   res.json(courses);
+});
 
-// Eager Loading
-app.get("/studentdata",async(req,res)=>{
+//hasOne()
+app.get("/eager",async(req,res)=>{
    const students = await Student.findAll({
       include:Data
    });
    res.json(students);
 });
-
-//Lazy Loading
 app.get("/lazy",async(req,res)=>{
-   const student = await Student.findByPk(2);
+   const student = await Student.findByPk(1);
    const data = await student.getDatum();
-   res.json(data)
+   res.json(student)
 });
-
-sequelize.sync();
-app.listen(4000,()=>{
-   console.log("Server running");
+app.get("/load",async(req,res)=>{
+   const student=await Student.findAll();
+   res.json(student)
+});
+sequelize.sync().then(()=>{
+   app.listen(4000,()=>{
+      console.log("Server running");
+   });
 });
