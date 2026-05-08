@@ -1,6 +1,7 @@
 const bcrypt=require("bcryptjs");
 const jwt=require("jsonwebtoken");
 const User=require("../model/User");
+const nodemailer=require("nodemailer");
 
 const register=async(req,res)=>{
     try{
@@ -118,5 +119,130 @@ const changepass=async(req,res)=>{
         });
     }
 }
+const forgotpass=async(req,res)=>{
+    try{
+        const{email}=req.body||{};
+        const emailregex=/^[^\s@]+@[^\s@]+\.[^\s@]+$/;   //regex
+        if(!email || !emailregex.test(email)){
+            return res.status(400).json({
+                message:"Invalid Email format"
+            });
+        }
+        const user=await User.findOne({
+            where:{email:email}
+        });
+        if(!user){
+            return res.status(404).json({
+                message:"User not found"
+            });
+        }
+        const reset=jwt.sign(
+            {
+                id:user.id
+            },
+            "reset_secretkey_123",
+            {
+                expiresIn:"15m"
+            }
+        );
+        const maillink=nodemailer.createTransport({
+            service:"gmail",
+            auth:{
+                user:"parinithavarshinis.22csd@kongu.edu",
+                pass:"qnmrxfzrgsmdresu"
+            }
+        });
+        const resetlink=`http://localhost:3000/resetpass/${reset}`;
+        await maillink.sendMail({
+            from:"parinithavarshinis.22csd@kongu.edu",
+            to:email,
+            subject:"Password Reset link",
+            text:`Click this link to reset password: ${resetlink}`
+        });
+        res.status(200).json({
+            message:"Reset link sent successfully",
+            token:reset
+        });
+    }
+    catch(err){
+        res.status(500).json({
+            error:err.message
+        });
+    }
+}
+const resetpass=async(req,res)=>{
+    try{
+        const {newpass}=req.body||{};
+        if(!newpass){
+            return res.status(400).json({
+                message:"New password is required"
+            });
+        }
+        const token=req.params.token;
+        const original=jwt.verify(token,"reset_secretkey_123");
+        const user=await User.findByPk(original.id);
+        if(!user){
+            return res.status(404).json({
+                message:"User not found"
+            });
+        }
+        const hashpass=await bcrypt.hash(newpass,10);
+        user.password=hashpass;
+        res.status(200).json({
+            message:"Password reset is successful"
+        });
+    }
+    catch(err){
+        res.status(500).json({
+            error:err.message
+        });
+    }
+};
+const forgotpassOTP=async(req,res)=>{
+    try{
+        const{email}=req.body||{};
+        const emailregex=/^[^\s@]+@[^\s@]+\.[^\s@]+$/;  
+        if(!email || !emailregex.test(email)){
+            return res.status(400).json({
+                message:"Invalid Email format"
+            });
+        }
+        const user=await User.findOne({
+            attributes: ['id'], 
+            where:{email},
+            raw: true
+        });
+        if(!user){
+            return res.status(404).json({
+                message:"User not found"
+            });
+        }
+        const otp=Math.floor(100000+Math.random()*900000).toString();
+        user.resetOTP=otp;
+        user.otpExpiry=new Date(Date.now()+5*60*1000); 
+        await user.save();
+        const maillink=nodemailer.createTransport({
+            service:"gmail",
+            auth:{
+                user:"parinithavarshinis.22csd@kongu.edu",
+                pass:"qnmrxfzrgsmdresu"
+            }
+        });
+        await maillink.sendMail({
+            from:"parinithavarshinis.22csd@kongu.edu",
+            to:email,
+            subject:"Password Reset OTP",
+            text:`OTP :${otp}. Valid for 5 mins`
+        });
+        res.status(200).json({
+            message:"OTP sent successfully"
+        });
+    }
+    catch(err){
+        res.status(500).json({
+            error:err.message
+        });
+    }
+}
 
-module.exports={register,login,changepass};
+module.exports={register,login,changepass,forgotpass,resetpass,forgotpassOTP};

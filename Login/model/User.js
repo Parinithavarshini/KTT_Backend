@@ -1,7 +1,7 @@
 const {DataTypes}=require("sequelize");
 const sequelize=require("../config/db.js");
 
-const User=sequelize.define("User",{
+const User=sequelize.define("c",{
     name:{
         type:DataTypes.STRING
     },
@@ -10,10 +10,20 @@ const User=sequelize.define("User",{
     },
     email:{
         type:DataTypes.STRING,
-        unique:true
+        unique:{
+            name:"email_unique_idx"
+        }
     },
     phone:{
         type:DataTypes.STRING
+    },
+    resetOTP:{
+        type:DataTypes.STRING,
+        allowNull:true
+    },
+    otpExpiry:{
+        type:DataTypes.DATE,
+        allowNull:true
     }
 });
 

@@ -6,7 +6,7 @@ const userRoute=require("./Route/userRoute");
 const app=express();
 app.use(bodyParser.json());
 app.use("/",userRoute);
-sequelize.sync().then(()=>{
+sequelize.sync({alter:true}).then(()=>{
     app.listen(3000,()=>{
         console.log("Server running on port 3000");
     });
