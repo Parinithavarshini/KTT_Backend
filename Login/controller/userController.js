@@ -70,7 +70,7 @@ const login=async(req,res)=>{
                 id:user.id,
                 email:user.email
             },
-            "login_secretkey_123",
+            process.env.JWT_SECRET,
             {
                 expiresIn:"3h"
             }
@@ -140,7 +140,7 @@ const forgotpass=async(req,res)=>{
             {
                 id:user.id
             },
-            "reset_secretkey_123",
+            process.env.RESET_SECRET,
             {
                 expiresIn:"15m"
             }
@@ -148,8 +148,8 @@ const forgotpass=async(req,res)=>{
         const maillink=nodemailer.createTransport({
             service:"gmail",
             auth:{
-                user:"parinithavarshinis.22csd@kongu.edu",
-                pass:"qnmrxfzrgsmdresu"
+                user:process.env.EMAIL_USER,
+                pass:process.env.EMAIL_PASS
             }
         });
         const resetlink=`http://localhost:3000/resetpass/${reset}`;
@@ -179,7 +179,7 @@ const resetpass=async(req,res)=>{
             });
         }
         const token=req.params.token;
-        const original=jwt.verify(token,"reset_secretkey_123");
+        const original=jwt.verify(token,process.env.RESET_SECRET);
         const user=await User.findByPk(original.id);
         if(!user){
             return res.status(404).json({
@@ -188,6 +188,7 @@ const resetpass=async(req,res)=>{
         }
         const hashpass=await bcrypt.hash(newpass,10);
         user.password=hashpass;
+        await user.save();
         res.status(200).json({
             message:"Password reset is successful"
         });
@@ -209,8 +210,7 @@ const forgotpassOTP=async(req,res)=>{
         }
         const user=await User.findOne({
             attributes: ['id'], 
-            where:{email},
-            raw: true
+            where:{email}
         });
         if(!user){
             return res.status(404).json({
@@ -224,8 +224,8 @@ const forgotpassOTP=async(req,res)=>{
         const maillink=nodemailer.createTransport({
             service:"gmail",
             auth:{
-                user:"parinithavarshinis.22csd@kongu.edu",
-                pass:"qnmrxfzrgsmdresu"
+                user:process.env.EMAIL_USER,
+                pass:process.env.EMAIL_PASS
             }
         });
         await maillink.sendMail({
